@@ -11,7 +11,7 @@ app.use(cors());
 const port = process.env.PORT || 5001;
 
 app.get("/", (req, res) => {
-  return res.status(200).send("Welcome To The Back-End Of The Akanksha Surgicals");
+  return res.status(200).send("Welcome To The Back-End Of PostGenerator");
 });
 
 app.use("/user", require("./routes/user.js"));
