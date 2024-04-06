@@ -22,10 +22,6 @@ const CreateUser = async (req, res) => {
     return res.status(400).json({ errors: errors.array() });
   }
   const data = matchedData(req);
-  if (data.role_type === "6552fc218c59438ef6c17cd8") {
-    logger.error(`${ip}: API /api/v1/user/add  responnded with Error "Only admin can create admin" `);
-    return res.status(403).json({ mesasge: "Only admin can create admin" });
-  }
 
   const oldUser = await User.findOne({ email: data.email });
 
@@ -76,10 +72,6 @@ const LogInUser = async (req, res) => {
       return res.status(404).json({ error: "User Does Not Exist" });
     }
 
-    if (!oldUser.approved) {
-      logger.error(`${ip}: API /api/v1/user/login  responded User approval is pending for email:  ${email} `);
-      return res.status(400).json({ error: "User approval is still pending" });
-    }
     /* if (!oldUser.email_varified) {
       logger.error(`${ip}: API /api/v1/user/login  responded please varify email:  ${email} `);
       return res.status(402).json({ error: "Please varify email" });
@@ -164,28 +156,6 @@ const GetUserById = async (req, res) => {
   }
 };
 
-//@desc Change Role_Type API
-//@route post user/change-role/:id
-//@access Public
-const ChangeUserRole = async (req, res) => {
-  const userId = req.params.id;
-  const newRoleType = req.body.role_type;
-
-  try {
-    // Find the user by ID and update the role type
-    const user = await User.findByIdAndUpdate(userId, { role_type: newRoleType }, { new: true });
-
-    if (!user) {
-      logger.info(`${ip}: API user/change-role/:id | responnded with "User not found" `);
-      return res.status(404).json({ message: "User not found" });
-    }
-    logger.info(`${ip}: API user/change-role/:id | responnded with "User role type updated successfully" `);
-    return res.status(200).json({ message: "User role type updated successfully", user });
-  } catch (error) {
-    return res.status(500).json({ message: "Internal server error", error: error.message });
-  }
-};
-
 //@desc Get Current User API
 //@route GET /user/getcurrentuser
 //@access Public
@@ -207,7 +177,6 @@ const GetCurrentUser = async (req, res) => {
 };
 
 module.exports = {
-  ChangeUserRole,
   CreateUser,
   GetCurrentUser,
   GetUserById,
